@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Rhythm Paradise</title>
+    <style>
+        html {
+            background-image: url("img/background.png");
+            background-size: cover;
+        }
+
+        #guy {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            margin-top: -400px;
+            margin-left: -400px;
+        }
+
+        #eyes {
+            position: absolute;
+            left: 42.5%;
+            top: 26%;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="img/guy_scream.png" id="guy" />
+    <img src="img/eyes.png" id="eyes" />
+    <script type="text/javascript">
+        (function () {
+            document.onmousemove = handleMouseMove;
+            // document.onclick = handleClick;
+
+            var guy = document.getElementById("guy")
+            var eyes = document.getElementById("eyes")
+
+            function handleMouseMove(e) {
+                var x = e.clientX
+                var y = e.clientY
+
+                var isIdle = false
+                var isHalf = false
+
+                if (x < 600 || x > 1920 - 600 || y < 92 || y > 1024 - 92) {
+                    guy.src = "img/guy_idle.png"
+                    isIdle = true
+                } else if ((x < 856 || x > 1920 - 856) || (y < 285 || y > 1027 - 285)) {
+                    guy.src = "img/guy_half_scream.png"
+                    isHalf = true
+                } else {
+                    guy.src = "img/guy_scream.png"
+                }
+
+                // if (isIdle)
+                //     updateIdleEyes(x, y)
+                // else 
+                if (isHalf)
+                    updateHalfEyes(x, y)
+                else
+                    eyes.style.opacity = 0
+            }
+
+            function updateIdleEyes(x, y) {
+                var eyesX = "";
+                if (x < 792)
+                    eyesX = "42.5%"
+                else if (x > 1920 - 792)
+                    eyesX = "45%"
+                else {
+                    eyesX = changeRange(x, [792, 1920 - 792], [42.5, 45]) + "%"
+                }
+                eyes.style.left = eyesX
+
+                var eyesY = "";
+                if (y < 193)
+                    eyesY = "26%"
+                else if (y > 1080 - 193)
+                    eyesY = "28.5%"
+                else {
+                    eyesY = changeRange(y, [193, 1080 - 193], [26, 28.5]) + "%"
+                }
+                eyes.style.top = eyesY
+                eyes.style.opacity = 100
+            }
+
+            function updateHalfEyes(x, y) {
+                var eyesX = changeRange(x, [792, 1920 - 792], [42.5, 45]) + "%"
+                eyes.style.left = eyesX
+
+                var eyesY = changeRange(y, [193, 1080 - 193], [22, 27.5]) + "%"
+                eyes.style.top = eyesY
+                eyes.style.opacity = 100
+            }
+
+            // function handleClick(e) {
+            // }
+
+            function changeRange(value, oldRange, newRange) {
+                return (((value - oldRange[0]) * (newRange[1] - newRange[0])) / (oldRange[1] - oldRange[0])) + newRange[0];
+            }
+        })();
+    </script>
+</body>
+
+</html>
