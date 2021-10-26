@@ -38,6 +38,9 @@
             var guy = document.getElementById("guy")
             var eyes = document.getElementById("eyes")
 
+            var width = window.screen.availWidth
+            var height = window.screen.availHeight
+
             function handleMouseMove(e) {
                 var x = e.clientX
                 var y = e.clientY
@@ -45,53 +48,28 @@
                 var isIdle = false
                 var isHalf = false
 
-                if (x < 600 || x > 1920 - 600 || y < 92 || y > 1024 - 92) {
+
+                if (x < (width / 3.2) || x > (width - (width / 3.2)) || y < (height / 11.93) || y > (height - (height / 11.93))) {
                     guy.src = "img/guy_idle.png"
                     isIdle = true
-                } else if ((x < 856 || x > 1920 - 856) || (y < 285 || y > 1027 - 285)) {
+                } else if ((x < (width / 2.24) || x > (width - (width / 2.24))) || (y < (height / 3.78) || y > (height - (height / 3.78)))) {
                     guy.src = "img/guy_half_scream.png"
                     isHalf = true
                 } else {
                     guy.src = "img/guy_scream.png"
                 }
 
-                // if (isIdle)
-                //     updateIdleEyes(x, y)
-                // else 
                 if (isHalf)
                     updateHalfEyes(x, y)
                 else
                     eyes.style.opacity = 0
             }
 
-            function updateIdleEyes(x, y) {
-                var eyesX = "";
-                if (x < 792)
-                    eyesX = "42.5%"
-                else if (x > 1920 - 792)
-                    eyesX = "45%"
-                else {
-                    eyesX = changeRange(x, [792, 1920 - 792], [42.5, 45]) + "%"
-                }
-                eyes.style.left = eyesX
-
-                var eyesY = "";
-                if (y < 193)
-                    eyesY = "26%"
-                else if (y > 1080 - 193)
-                    eyesY = "28.5%"
-                else {
-                    eyesY = changeRange(y, [193, 1080 - 193], [26, 28.5]) + "%"
-                }
-                eyes.style.top = eyesY
-                eyes.style.opacity = 100
-            }
-
             function updateHalfEyes(x, y) {
-                var eyesX = changeRange(x, [792, 1920 - 792], [42.5, 45]) + "%"
+                var eyesX = changeRange(x, [width / 2.42, width - (width / 2.42)], [42.5, 45]) + "%"
                 eyes.style.left = eyesX
 
-                var eyesY = changeRange(y, [193, 1080 - 193], [22, 27.5]) + "%"
+                var eyesY = changeRange(y, [height / 5.59, height - (height / 5.59)], [22, 27.5]) + "%"
                 eyes.style.top = eyesY
                 eyes.style.opacity = 100
             }
