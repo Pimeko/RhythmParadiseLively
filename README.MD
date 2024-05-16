@@ -10,6 +10,3 @@ Made with love by Benjamin Widawski, based on the amazing game [Rhythm Paradise]
 - Drag and drop the .zip archive to the program
 ![](img/tuto_lively.gif)
 - Click on the newly added wallpaper "Rhythm Paradise"
-
-# Known bugs
-This only works for 1920x1080 resolution for now.
