@@ -4,82 +4,125 @@
 <head>
     <title>Rhythm Paradise</title>
     <style>
+	
         html {
             background-image: url("img/background.png");
             background-size: cover;
+			overflow: hidden;
         }
 
-        #guy {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 800px;
-            height: 800px;
-            margin-top: -400px;
-            margin-left: -400px;
-        }
-
-        #eyes {
-            position: absolute;
-            left: 42.5%;
-            top: 26%;
-        }
+		#ceyes, #ceyes img {
+			position: absolute;
+		}
+		
+		#container {
+			display: grid;
+			place-items: center;
+			min-height: 100vh;
+			position: relative;
+		}
+				
+		.eye {
+			pointer-events:none;
+		}
+				
+		table, th, td {
+		  border: 0px solid black;
+		  border-collapse: collapse;
+		}
+		
+		.top-bottom-safeZone {
+			height: 280px;
+		}
+		
+		.left-right-safeZone {
+			width: 380px;
+		}
+		
     </style>
 </head>
 
 <body>
-    <img src="img/guy_scream.png" id="guy" />
-    <img src="img/eyes.png" id="eyes" />
+	<div id="container">
+		
+		<table id="wrapper">
+			<tr>
+				<td colspan="3" class="top-bottom-safeZone" onmouseover="halfScream()" onmouseleave="idle()">&nbsp;</td>
+			</tr>
+			<tr>
+				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td>
+				<td><img src="img/guy_idle_crop.png" id="guy" onmouseover="scream()" onmouseleave="halfScream()" style="z-index: 1000;"  /></td>
+				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td></tr>
+			</tr>
+			<tr>
+				<td colspan="3" class="top-bottom-safeZone" onmouseover="halfScream()" onmouseleave="idle()">&nbsp;</td>
+			</tr>
+		</table>
+		
+		<div id="ceyes">
+			<img src="img/eye.png" class="eye" style="top:-230px; left:10px; opacity:0;"/>
+			<img src="img/eye.png" class="eye" style="top:-230px; right:10px; opacity:0;" />
+		</div>
+	</div>
+	
     <script type="text/javascript">
+	
+		const guy = document.getElementById('guy');
+		const eyes_new = document.querySelectorAll('.eye');
+
+		function scream(){
+			guy.src = "img/guy_scream_crop.png";
+			hideEyes();
+		}
+		
+		function halfScream(){
+			guy.src = "img/guy_half_scream_crop.png";
+			showEyes();
+		}
+		
+		function idle(){
+			guy.src = "img/guy_idle_crop.png";
+			hideEyes();
+		}
+		
+		function showEyes(){
+			eyes_new.forEach(e => { e.style.opacity = 100; });	
+		}
+		
+		function hideEyes(){
+			eyes_new.forEach(e => { e.style.opacity = 0; });	
+		}
+	
         (function () {
+		
+			const rekt = guy.getBoundingClientRect();
+			const anchorX = rekt.left + rekt.width / 2;
+			const anchorY = rekt.top + rekt.height / 2 - 250;
+			
             document.onmousemove = handleMouseMove;
-            // document.onclick = handleClick;
-
-            var guy = document.getElementById("guy")
-            var eyes = document.getElementById("eyes")
-
-            var width = window.screen.availWidth
-            var height = window.screen.availHeight
 
             function handleMouseMove(e) {
-                var x = e.clientX
-                var y = e.clientY
+                var x = e.clientX;
+                var y = e.clientY;
 
-                var isIdle = false
-                var isHalf = false
-
-
-                if (x < (width / 3.2) || x > (width - (width / 3.2)) || y < (height / 11.93) || y > (height - (height / 11.93))) {
-                    guy.src = "img/guy_idle.png"
-                    isIdle = true
-                } else if ((x < (width / 2.24) || x > (width - (width / 2.24))) || (y < (height / 3.78) || y > (height - (height / 3.78)))) {
-                    guy.src = "img/guy_half_scream.png"
-                    isHalf = true
-                } else {
-                    guy.src = "img/guy_scream.png"
-                }
-
-                if (isHalf)
-                    updateHalfEyes(x, y)
-                else
-                    eyes.style.opacity = 0
+                var isIdle = false;
+                var isHalf = false;
+				
+				const angleDeg = angle(x, y, anchorX, anchorY);
+				
+				eyes_new.forEach(e => {
+					e.style.transform = `rotate(${90+angleDeg}deg)`;
+				});
             }
 
-            function updateHalfEyes(x, y) {
-                var eyesX = changeRange(x, [width / 2.42, width - (width / 2.42)], [42.5, 45]) + "%"
-                eyes.style.left = eyesX
+			function angle(cx, cy, ex, ey){
+				const dy = ey - cy;
+				const dx = ex - cx;
+				const rad = Math.atan2(dy, dx);
+				const deg = rad * 180 / Math.PI;
+				return deg;
+			}
 
-                var eyesY = changeRange(y, [height / 5.59, height - (height / 5.59)], [22, 27.5]) + "%"
-                eyes.style.top = eyesY
-                eyes.style.opacity = 100
-            }
-
-            // function handleClick(e) {
-            // }
-
-            function changeRange(value, oldRange, newRange) {
-                return (((value - oldRange[0]) * (newRange[1] - newRange[0])) / (oldRange[1] - oldRange[0])) + newRange[0];
-            }
         })();
     </script>
 </body>
