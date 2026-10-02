@@ -79,15 +79,15 @@
 		
 		<table id="wrapper">
 			<tr>
-				<td colspan="3" class="top-bottom-safeZone" onmouseover="halfScream()" onmouseleave="idle()">&nbsp;</td>
+				<td colspan="3" class="top-bottom-safeZone">&nbsp;</td>
 			</tr>
 			<tr>
-				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td>
-				<td><img src="img/guy_idle_crop.png" id="guy" onmouseover="scream()" onmouseleave="halfScream()" style="z-index: 1000;"  /></td>
-				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td>
+				<td class="left-right-safeZone">&nbsp;</td>
+				<td><img src="img/guy_idle_crop.png" id="guy" style="z-index: 1000;"  /></td>
+				<td class="left-right-safeZone">&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan="3" class="top-bottom-safeZone" onmouseover="halfScream()" onmouseleave="idle()">&nbsp;</td>
+				<td colspan="3" class="top-bottom-safeZone">&nbsp;</td>
 			</tr>
 		</table>
 		
@@ -98,8 +98,10 @@
 	</div>
 	
     <script type="text/javascript">
-	
+		var SCREAM_RADIUS = 280;       // rayon (px) autour du centre du guy dans lequel il crie
+
 		const guy = document.getElementById('guy');
+		const wrapper = document.getElementById('wrapper');
 		const eyes_new = document.querySelectorAll('.eye');
 
 		function scream(){
@@ -124,6 +126,28 @@
 		function hideEyes(){
 			eyes_new.forEach(e => { e.style.opacity = 0; });	
 		}
+
+		// Cri dans le cercle, demi-cri ailleurs dans le tableau, repos en dehors
+		var currentState = "idle";
+		function setState(state){
+			if (state === currentState) return;
+			currentState = state;
+			if (state === "scream") scream();
+			else if (state === "half") halfScream();
+			else idle();
+		}
+
+		function updateState(x, y, target){
+			const r = guy.getBoundingClientRect();
+			const dx = x - (r.left + r.width / 2);
+			const dy = y - (r.top + r.height / 2);
+			if (dx * dx + dy * dy <= SCREAM_RADIUS * SCREAM_RADIUS) setState("scream");
+			else if (wrapper.contains(target)) setState("half");
+			else setState("idle");
+		}
+
+		document.addEventListener("mousemove", e => updateState(e.clientX, e.clientY, e.target));
+		document.documentElement.addEventListener("mouseleave", () => setState("idle"));
 	
         (function () {
 		
@@ -222,7 +246,7 @@
             window.addEventListener("resize", placeCircle)
 
             document.addEventListener("click", function (e) {
-                if (e.target !== guyImg || guyImg.getAttribute("src") !== SCREAM_SRC) {
+                if (guyImg.getAttribute("src") !== SCREAM_SRC) {
                     clickCount = 0
                     return
                 }
