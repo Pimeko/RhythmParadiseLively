@@ -42,7 +42,6 @@
 
 		#guy {
 			display: block;
-			image-rendering: pixelated;
 		}
 
 		#guy.pop {
@@ -99,7 +98,9 @@
 	</div>
 
     <script type="text/javascript">
-        var GUY_SCALE = 6              // agrandissement des sprites DS (56x92 px) ; entier = pixels nets
+        var GUY_SCALE = 6              // taille d'affichage = sprite DS (56x92 px) x GUY_SCALE
+        var GUY_FRAMES_DIR = "img/chorus/"  // "img/chorus/" = sprites DS d'origine, "img/chorus/" = version upscalée
+        var GUY_PIXELATED = false      // true = pixels nets (pour les sprites d'origine), false = rendu lissé
         var SCREAM_TRANSITION_SPEED = 5  // vitesse du passage demi-cri <-> cri (1 = vitesse du jeu)
         var PASS_THROUGH_SPEED = 45     // accélération du demi-cri quand on ne fait que le traverser (idle <-> cri)
         var IDLE_REPEAT = 10            // nombre de fois que la séquence 6 est jouée avant la séquence 1
@@ -120,6 +121,7 @@
             var img = document.getElementById("guy")
             img.width = 56 * GUY_SCALE
             img.height = 92 * GUY_SCALE
+            img.style.imageRendering = GUY_PIXELATED ? "pixelated" : "auto"
 
             var idleLoop = []
             for (var i = 0; i < IDLE_REPEAT; i++) idleLoop = idleLoop.concat(SEQ[6])
@@ -147,7 +149,7 @@
             var shownCell = -1
 
             function cellSrc(cell) {
-                return "img/chorus/cell_" + (cell < 10 ? "0" : "") + cell + ".png"
+                return GUY_FRAMES_DIR + "cell_" + (cell < 10 ? "0" : "") + cell + ".png"
             }
 
             // Entre dans un segment par son début (en montant) ou sa fin (en descendant)
