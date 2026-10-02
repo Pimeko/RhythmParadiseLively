@@ -44,6 +44,16 @@
 			display: block;
 		}
 
+		#guy.pop {
+			animation: guy-pop 0.2s ease-out;
+		}
+
+		@keyframes guy-pop {
+			0%   { transform: scale(1); }
+			40%  { transform: scale(1.08); }
+			100% { transform: scale(1); }
+		}
+
 		.eye {
 			pointer-events:none;
 		}
@@ -222,6 +232,22 @@
                     placeCircle()
                     circle.style.display = circle.style.display === "none" ? "block" : "none"
                 }
+            })
+        })();
+    </script>
+
+    <script type="text/javascript">
+        (function () {
+            var guyImg = document.getElementById("guy")
+
+            // Relance l'animation à chaque clic, même pendant qu'elle tourne
+            guyImg.addEventListener("click", function () {
+                guyImg.classList.remove("pop")
+                void guyImg.offsetWidth
+                guyImg.classList.add("pop")
+            })
+            guyImg.addEventListener("animationend", function () {
+                guyImg.classList.remove("pop")
             })
         })();
     </script>
