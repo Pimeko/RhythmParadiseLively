@@ -138,7 +138,7 @@
 		}
 
 		function updateState(x, y, target){
-			const r = guy.getBoundingClientRect();
+			const r = guy.parentElement.getBoundingClientRect();
 			const dx = x - (r.left + r.width / 2);
 			const dy = y - (r.top + r.height / 2);
 			if (dx * dx + dy * dy <= SCREAM_RADIUS * SCREAM_RADIUS) setState("scream");
@@ -238,7 +238,7 @@
 
             // Centre le cercle sur le centre réel de l'image affichée
             function placeCircle() {
-                var r = guyImg.getBoundingClientRect()
+                var r = guyImg.parentElement.getBoundingClientRect()
                 circle.style.left = (r.left + r.width / 2 - CIRCLE_RADIUS) + "px"
                 circle.style.top = (r.top + r.height / 2 - CIRCLE_RADIUS) + "px"
             }
@@ -273,6 +273,67 @@
             guyImg.addEventListener("animationend", function () {
                 guyImg.classList.remove("pop")
             })
+        })();
+    </script>
+
+    <script type="text/javascript">
+        var PARALLAX_MAX_SHIFT = 12    // déplacement max du guy en px (vers la souris)
+        var PARALLAX_MAX_TILT = 6      // inclinaison max du guy en degrés
+        var PARALLAX_SMOOTHING = 0.2   // vitesse de suivi (0..1, plus haut = plus réactif)
+        var VIBRATE_AMPLITUDE = 1.5      // amplitude de la vibration en px
+        var VIBRATE_TILT = 1.5           // amplitude de la vibration en rotation (degrés)
+        var VIBRATE_INTERVAL = 35;     // ms entre deux secousses
+
+        // Quand la souris est dans le cercle de cri, le guy se décale, penche selon sa position et vibre
+        (function () {
+            var guyImg = document.getElementById("guy")
+            var target = { x: 0, y: 0, tilt: 0 }
+            var current = { x: 0, y: 0, tilt: 0 }
+            var shake = { x: 0, y: 0, tilt: 0 }
+            var hovering = false
+            var lastShake = 0
+
+            function reset() {
+                hovering = false
+                target.x = target.y = target.tilt = 0
+            }
+
+            document.addEventListener("mousemove", function (e) {
+                var r = guyImg.parentElement.getBoundingClientRect()
+                var nx = (e.clientX - (r.left + r.width / 2)) / SCREAM_RADIUS
+                var ny = (e.clientY - (r.top + r.height / 2)) / SCREAM_RADIUS
+                if (nx * nx + ny * ny > 1) {
+                    reset()
+                    return
+                }
+                hovering = true
+                target.x = nx * PARALLAX_MAX_SHIFT
+                target.y = ny * PARALLAX_MAX_SHIFT
+                target.tilt = nx * PARALLAX_MAX_TILT
+            })
+            document.documentElement.addEventListener("mouseleave", reset)
+
+            function rand(a) { return (Math.random() * 2 - 1) * a }
+
+            function frame(now) {
+                current.x += (target.x - current.x) * PARALLAX_SMOOTHING
+                current.y += (target.y - current.y) * PARALLAX_SMOOTHING
+                current.tilt += (target.tilt - current.tilt) * PARALLAX_SMOOTHING
+
+                if (!hovering) {
+                    shake.x = shake.y = shake.tilt = 0
+                } else if (now - lastShake >= VIBRATE_INTERVAL) {
+                    lastShake = now
+                    shake.x = rand(VIBRATE_AMPLITUDE)
+                    shake.y = rand(VIBRATE_AMPLITUDE)
+                    shake.tilt = rand(VIBRATE_TILT)
+                }
+
+                guyImg.style.translate = (current.x + shake.x) + "px " + (current.y + shake.y) + "px"
+                guyImg.style.rotate = (current.tilt + shake.tilt) + "deg"
+                requestAnimationFrame(frame)
+            }
+            requestAnimationFrame(frame)
         })();
     </script>
 </body>
