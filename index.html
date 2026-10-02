@@ -83,7 +83,7 @@
 			</tr>
 			<tr>
 				<td class="left-right-safeZone">&nbsp;</td>
-				<td><img src="img/chorus/cell_06.png" id="guy" style="z-index: 1000;"  /></td>
+				<td><img src="img/guy_idle_crop.png" id="guy" style="z-index: 1000;"  /></td>
 				<td class="left-right-safeZone">&nbsp;</td>
 			</tr>
 			<tr>
@@ -98,109 +98,6 @@
 	</div>
 
     <script type="text/javascript">
-        var GUY_SCALE = 6              // taille d'affichage = sprite DS (56x92 px) x GUY_SCALE
-        var GUY_FRAMES_DIR = "img/chorus/"  // "img/chorus/" = sprites DS d'origine, "img/chorus/" = version upscalée
-        var GUY_PIXELATED = false      // true = pixels nets (pour les sprites d'origine), false = rendu lissé
-        var SCREAM_TRANSITION_SPEED = 5  // vitesse du passage demi-cri <-> cri (1 = vitesse du jeu)
-        var PASS_THROUGH_SPEED = 45     // accélération du demi-cri quand on ne fait que le traverser (idle <-> cri)
-        var IDLE_REPEAT = 10            // nombre de fois que la séquence 6 est jouée avant la séquence 1
-        var SCREAM_LOOP_FRAMES = 3     // nombre de frames de fin du passage au cri qui bouclent pendant le cri
-        var TICK_MS = 1000 / 60        // durée d'un tick DS (les durées des séquences sont en ticks)
-
-        // Séquences du chorus.NANR : [cellule, durée en ticks]
-        var SEQ = {
-            1:  [[6, 4], [7, 4], [6, 4], [7, 4], [6, 4], [7, 4], [8, 4], [9, 4], [10, 4], [19, 4]],
-            6:  [[6, 5], [7, 5], [6, 5], [7, 5]],
-            11: [[25, 2], [24, 2], [23, 2]],
-            12: [[20, 6], [21, 6], [22, 4]],
-            13: [[11, 6], [12, 6], [13, 6], [14, 4], [15, 4], [16, 4], [20, 6], [21, 6], [22, 4]]
-        };
-
-        // Lecteur : une piste idle <-> demi-cri <-> cri, parcourue dans un sens ou dans l'autre
-        var guyAnim = (function () {
-            var img = document.getElementById("guy")
-            img.width = 56 * GUY_SCALE
-            img.height = 92 * GUY_SCALE
-            img.style.imageRendering = GUY_PIXELATED ? "pixelated" : "auto"
-
-            var idleLoop = []
-            for (var i = 0; i < IDLE_REPEAT; i++) idleLoop = idleLoop.concat(SEQ[6])
-            idleLoop = idleLoop.concat(SEQ[1])
-
-            // Les transitions sont lues vers l'avant pour monter (idle -> cri), à l'envers pour redescendre
-            var toScream = SEQ[13].slice().reverse()
-            var track = [
-                { loop: true,  frames: idleLoop },                                 // 0 idle
-                { loop: false, frames: SEQ[11], speed: 1 },                        // 1 idle <-> demi-cri
-                { loop: true,  frames: SEQ[12] },                                  // 2 demi-cri
-                { loop: false, frames: toScream, speed: SCREAM_TRANSITION_SPEED },  // 3 demi-cri <-> cri
-                { loop: true,  frames: toScream.slice(-SCREAM_LOOP_FRAMES).reverse() } // 4 cri
-            ]
-            var LEVEL = { idle: 0, half: 2, scream: 4 }
-
-            // Précharge toutes les cellules pour éviter un clignotement au premier affichage
-            track.forEach(function (seg) {
-                seg.frames.forEach(function (f) { new Image().src = cellSrc(f[0]) })
-            })
-
-            var target = 0
-            var level = 0
-            var index = 0
-            var shownCell = -1
-
-            function cellSrc(cell) {
-                return GUY_FRAMES_DIR + "cell_" + (cell < 10 ? "0" : "") + cell + ".png"
-            }
-
-            // Entre dans un segment par son début (en montant) ou sa fin (en descendant)
-            function enter(newLevel, dir) {
-                level = newLevel
-                var frames = track[level].frames
-                index = dir > 0 || track[level].loop ? 0 : frames.length - 1
-                // Évite d'afficher deux fois de suite la même cellule à la jonction
-                if (frames.length > 1 && frames[index][0] === shownCell) index += dir > 0 || track[level].loop ? 1 : -1
-            }
-
-            function step() {
-                var seg = track[level]
-                if (seg.loop && level === target) {
-                    index = (index + 1) % seg.frames.length
-                } else {
-                    var dir = target > level ? 1 : -1
-                    if (seg.loop) {
-                        enter(level + dir, dir)
-                    } else {
-                        index += dir
-                        if (index < 0 || index >= seg.frames.length) enter(level + dir, dir)
-                    }
-                }
-            }
-
-            function tick() {
-                var seg = track[level]
-                var frame = seg.frames[index]
-                var speed = seg.speed || 1
-                // En route vers un état plus lointain : on traverse ce segment en accéléré
-                var passingThrough = seg.loop ? level !== target : Math.abs(target - level) > 1
-                if (passingThrough) speed *= PASS_THROUGH_SPEED
-                if (frame[0] !== shownCell) {
-                    img.src = cellSrc(frame[0])
-                    shownCell = frame[0]
-                }
-                setTimeout(function () {
-                    step()
-                    tick()
-                }, Math.max(1, frame[1]) * TICK_MS / speed)
-            }
-            tick()
-
-            return {
-                setTarget: function (state) { target = LEVEL[state] }
-            }
-        })();
-    </script>
-
-    <script type="text/javascript">
 		var SCREAM_RADIUS = 280;       // rayon (px) autour du centre du guy dans lequel il crie
 
 		const guy = document.getElementById('guy');
@@ -208,17 +105,17 @@
 		const eyes_new = document.querySelectorAll('.eye');
 
 		function scream(){
-			guyAnim.setTarget("scream");
+			guy.src = "img/guy_scream_crop.png";
 			hideEyes();
 		}
 		
 		function halfScream(){
-			guyAnim.setTarget("half");
-			hideEyes();                // les frames DS ont déjà leurs yeux
+			guy.src = "img/guy_half_scream_crop.png";
+			showEyes();
 		}
 		
 		function idle(){
-			guyAnim.setTarget("idle");
+			guy.src = "img/guy_idle_crop.png";
 			hideEyes();
 		}
 		
