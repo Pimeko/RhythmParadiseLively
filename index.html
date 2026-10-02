@@ -141,6 +141,84 @@
 
         })();
     </script>
+
+    <script type="text/javascript">
+        var CIRCLE_RADIUS = 350        // rayon du cercle en px
+        var CIRCLE_COLOR = "red"       // couleur du trait
+        var CIRCLE_THICKNESS = 4       // épaisseur du trait en px
+        var CLICKS_TO_TOGGLE = 5       // nombre de clics nécessaires
+        var CROSS_COUNT = 6            // nombre de croix sur le cercle (la 1re à midi)
+        var CROSS_SIZE = 40            // taille d'une croix en px
+        var CROSS_THICKNESS = 6        // épaisseur des branches d'une croix en px
+        var CROSS_COLOR = "red";       // couleur des croix (le ";" est obligatoire avant l'IIFE)
+
+        (function () {
+            var guyImg = document.getElementById("guy")
+            var SCREAM_SRC = "img/guy_scream_crop.png"
+            var clickCount = 0
+
+            var circle = document.createElement("div")
+            circle.style.position = "fixed"
+            circle.style.width = (CIRCLE_RADIUS * 2) + "px"
+            circle.style.height = (CIRCLE_RADIUS * 2) + "px"
+            circle.style.border = CIRCLE_THICKNESS + "px solid " + CIRCLE_COLOR
+            circle.style.borderRadius = "50%"
+            circle.style.boxSizing = "border-box"
+            circle.style.pointerEvents = "none"
+            circle.style.zIndex = "2000"
+            circle.style.display = "none"
+            document.body.appendChild(circle)
+
+            // Les enfants sont positionnés par rapport à l'intérieur de la bordure
+            var center = CIRCLE_RADIUS - CIRCLE_THICKNESS
+            var trackRadius = CIRCLE_RADIUS - CIRCLE_THICKNESS / 2
+            for (var i = 0; i < CROSS_COUNT; i++) {
+                var angle = (2 * Math.PI * i) / CROSS_COUNT
+                var cross = document.createElement("div")
+                cross.style.position = "absolute"
+                cross.style.width = CROSS_SIZE + "px"
+                cross.style.height = CROSS_SIZE + "px"
+                cross.style.left = (center + trackRadius * Math.sin(angle) - CROSS_SIZE / 2) + "px"
+                cross.style.top = (center - trackRadius * Math.cos(angle) - CROSS_SIZE / 2) + "px"
+                cross.style.pointerEvents = "none"
+                for (var j = 0; j < 2; j++) {
+                    var bar = document.createElement("div")
+                    bar.style.position = "absolute"
+                    bar.style.left = "0"
+                    bar.style.top = ((CROSS_SIZE - CROSS_THICKNESS) / 2) + "px"
+                    bar.style.width = CROSS_SIZE + "px"
+                    bar.style.height = CROSS_THICKNESS + "px"
+                    bar.style.background = CROSS_COLOR
+                    bar.style.transform = "rotate(" + (j === 0 ? 45 : -45) + "deg)"
+                    bar.style.pointerEvents = "none"
+                    cross.appendChild(bar)
+                }
+                circle.appendChild(cross)
+            }
+
+            // Centre le cercle sur le centre réel de l'image affichée
+            function placeCircle() {
+                var r = guyImg.getBoundingClientRect()
+                circle.style.left = (r.left + r.width / 2 - CIRCLE_RADIUS) + "px"
+                circle.style.top = (r.top + r.height / 2 - CIRCLE_RADIUS) + "px"
+            }
+
+            window.addEventListener("resize", placeCircle)
+
+            document.addEventListener("click", function (e) {
+                if (e.target !== guyImg || guyImg.getAttribute("src") !== SCREAM_SRC) {
+                    clickCount = 0
+                    return
+                }
+                clickCount++
+                if (clickCount >= CLICKS_TO_TOGGLE) {
+                    clickCount = 0
+                    placeCircle()
+                    circle.style.display = circle.style.display === "none" ? "block" : "none"
+                }
+            })
+        })();
+    </script>
 </body>
 
 </html>
