@@ -11,6 +11,10 @@
 			overflow: hidden;
         }
 
+		body {
+			margin: 0;
+		}
+
 		#ceyes, #ceyes img {
 			position: absolute;
 		}
@@ -18,10 +22,22 @@
 		#container {
 			display: grid;
 			place-items: center;
-			min-height: 100vh;
+			height: 100vh;
+			overflow: hidden;
 			position: relative;
 		}
 				
+		#wrapper {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		#guy {
+			display: block;
+		}
+
 		.eye {
 			pointer-events:none;
 		}
@@ -52,7 +68,7 @@
 			<tr>
 				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td>
 				<td><img src="img/guy_idle_crop.png" id="guy" onmouseover="scream()" onmouseleave="halfScream()" style="z-index: 1000;"  /></td>
-				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td></tr>
+				<td onmouseover="halfScream()" onmouseleave="idle()" class="left-right-safeZone">&nbsp;</td>
 			</tr>
 			<tr>
 				<td colspan="3" class="top-bottom-safeZone" onmouseover="halfScream()" onmouseleave="idle()">&nbsp;</td>
