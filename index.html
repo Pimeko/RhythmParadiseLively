@@ -98,7 +98,7 @@
 	</div>
 
     <script type="text/javascript">
-		var SCREAM_RADIUS = 280;       // rayon (px) autour du centre du guy dans lequel il crie
+		var SCREAM_RADIUS = 280;       // radius (px) around the guy's center in which he screams
 
 		const guy = document.getElementById('guy');
 		const wrapper = document.getElementById('wrapper');
@@ -127,7 +127,7 @@
 			eyes_new.forEach(e => { e.style.opacity = 0; });	
 		}
 
-		// Cri dans le cercle, demi-cri ailleurs dans le tableau, repos en dehors
+		// Scream inside the circle, half scream elsewhere in the table, idle outside
 		var currentState = "idle";
 		function setState(state){
 			if (state === currentState) return;
@@ -183,14 +183,14 @@
     </script>
 
     <script type="text/javascript">
-        var CIRCLE_RADIUS = 350        // rayon du cercle en px
-        var CIRCLE_COLOR = "red"       // couleur du trait
-        var CIRCLE_THICKNESS = 4       // épaisseur du trait en px
-        var CLICKS_TO_TOGGLE = 5       // nombre de clics nécessaires
-        var CROSS_COUNT = 6            // nombre de croix sur le cercle (la 1re à midi)
-        var CROSS_SIZE = 40            // taille d'une croix en px
-        var CROSS_THICKNESS = 6        // épaisseur des branches d'une croix en px
-        var CROSS_COLOR = "red";       // couleur des croix (le ";" est obligatoire avant l'IIFE)
+        var CIRCLE_RADIUS = 350        // circle radius in px
+        var CIRCLE_COLOR = "red"       // stroke color
+        var CIRCLE_THICKNESS = 4       // stroke thickness in px
+        var CLICKS_TO_TOGGLE = 5       // number of clicks needed
+        var CROSS_COUNT = 6            // number of crosses on the circle (the 1st at 12 o'clock)
+        var CROSS_SIZE = 40            // size of a cross in px
+        var CROSS_THICKNESS = 6        // thickness of a cross's arms in px
+        var CROSS_COLOR = "red";       // cross color (the ";" is required before the IIFE)
 
         (function () {
             var guyImg = document.getElementById("guy")
@@ -208,7 +208,7 @@
             circle.style.display = "none"
             document.body.appendChild(circle)
 
-            // Les enfants sont positionnés par rapport à l'intérieur de la bordure
+            // Children are positioned relative to the inside of the border
             var center = CIRCLE_RADIUS - CIRCLE_THICKNESS
             var trackRadius = CIRCLE_RADIUS - CIRCLE_THICKNESS / 2
             for (var i = 0; i < CROSS_COUNT; i++) {
@@ -235,7 +235,7 @@
                 circle.appendChild(cross)
             }
 
-            // Centre le cercle sur le centre réel de l'image affichée
+            // Center the circle on the actual center of the displayed image
             function placeCircle() {
                 var r = guyImg.parentElement.getBoundingClientRect()
                 circle.style.left = (r.left + r.width / 2 - CIRCLE_RADIUS) + "px"
@@ -263,7 +263,7 @@
         (function () {
             var guyImg = document.getElementById("guy")
 
-            // Relance l'animation à chaque clic, même pendant qu'elle tourne
+            // Restart the animation on every click, even while it is running
             guyImg.addEventListener("click", function () {
                 guyImg.classList.remove("pop")
                 void guyImg.offsetWidth
@@ -276,14 +276,14 @@
     </script>
 
     <script type="text/javascript">
-        var PARALLAX_MAX_SHIFT = 12    // déplacement max du guy en px (vers la souris)
-        var PARALLAX_MAX_TILT = 6      // inclinaison max du guy en degrés
-        var PARALLAX_SMOOTHING = 0.2   // vitesse de suivi (0..1, plus haut = plus réactif)
-        var VIBRATE_AMPLITUDE = 1.5      // amplitude de la vibration en px
-        var VIBRATE_TILT = 1.5           // amplitude de la vibration en rotation (degrés)
-        var VIBRATE_INTERVAL = 35;     // ms entre deux secousses
+        var PARALLAX_MAX_SHIFT = 12    // max guy offset in px (toward the mouse)
+        var PARALLAX_MAX_TILT = 6      // max guy tilt in degrees
+        var PARALLAX_SMOOTHING = 0.2   // follow speed (0..1, higher = more responsive)
+        var VIBRATE_AMPLITUDE = 1.5      // vibration amplitude in px
+        var VIBRATE_TILT = 1.5           // vibration amplitude in rotation (degrees)
+        var VIBRATE_INTERVAL = 35;     // ms between two shakes
 
-        // Quand la souris est dans le cercle de cri, le guy se décale, penche selon sa position et vibre
+        // While the mouse is inside the scream circle, the guy shifts, tilts toward it and vibrates
         (function () {
             var guyImg = document.getElementById("guy")
             var target = { x: 0, y: 0, tilt: 0 }
